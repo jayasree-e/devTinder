@@ -1,6 +1,8 @@
 const express = require("express");
  const app =express();
- app.get("/user", (req,res)=>{
+ app.get("/user/a*c/:name/", (req,res)=>{
+    console.log(req.params)
+    console.log(req.query)
     res.send("this is get")
  })
  app.post("/user",(req,res)=>{
