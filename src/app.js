@@ -12,29 +12,20 @@ const express = require("express");
 //  app.delete("/user",(req,res)=>{
 //     res.send("this is delete")
 //  })
- app.use("/user",
-   (req,res,next)=>{
-   console.log("response 1");
-   next();
-   // res.send("response 1")
- },
- [(req,res,next)=>{
-   console.log("response 2");
-  // res.send("response 2")
-   next();
- },
- (req,res,next)=>{
-   console.log("response 3");
-   res.send("response 3")
- }],
- (req,res)=>{
-   console.log("response 4");
-   res.send("response 4")
- }
-)
+const {adminAuth,userAuth }= require("./middlewares/auth")
+ app.use("/admin", adminAuth);
+ app.get("/admin/getData", (req,res)=>{
+   res.send("Data fetched");
+ })
+ app.delete("/admin/DeleteData", (req,res)=>{
+   res.send("Deleted Data");
+ })
  
+ app.get("/user",userAuth,(req,res)=>{
+   res.send("user Get")
+ })
  
  
  app.listen("7777",()=>{
-    console.log("listening on prot 777");
+    console.log("listening on port 7777");
  });
