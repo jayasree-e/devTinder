@@ -1,31 +1,34 @@
 const express = require("express");
- const app =express();
-//  app.get("/user/a*c/:name/", (req,res)=>{
-//     console.log(req.params)
-//     console.log(req.query)
-//     res.send("this is get")
-//  })
-//  app.post("/user",(req,res)=>{
-//     res.send("this post");
+const connectDB =require("./config/database");
+const app =express();
 
-//  })
-//  app.delete("/user",(req,res)=>{
-//     res.send("this is delete")
-//  })
-const {adminAuth,userAuth }= require("./middlewares/auth")
- app.use("/admin", adminAuth);
- app.get("/admin/getData", (req,res)=>{
-   res.send("Data fetched");
- })
- app.delete("/admin/DeleteData", (req,res)=>{
-   res.send("Deleted Data");
- })
- 
- app.get("/user",userAuth,(req,res)=>{
-   res.send("user Get")
- })
- 
- 
- app.listen("7777",()=>{
+const User = require("./models/users");
+app.post("/signup", async(req,res)=>{
+   //creating a new instance of User Model
+   const user = new User({
+      firstName: "hello",
+      lastName: "world",
+      emailId: "hello@test.com",
+      password:"helloworld"
+
+   })
+   try{
+      await user.save();
+      res.send("Submitted succesfully");
+   }
+   catch(err){
+      res.status(400).send("error",err.message)
+   }
+   
+})
+connectDB().
+then(()=>{
+   console.log("database connected")
+app.listen("7777",()=>{
     console.log("listening on port 7777");
  });
+}).catch((err)=>{
+console.log("database cannot be connected")
+})
+ 
+ 
