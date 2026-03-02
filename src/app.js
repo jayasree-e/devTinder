@@ -14,7 +14,7 @@ app.post("/signup", async(req,res)=>{
       res.send("Submitted succesfully");
    }
    catch(err){
-      res.status(400).send("error",err.message)
+      res.status(400).send(err.message)
    }
    
 })
@@ -60,14 +60,24 @@ app.delete("/user", async(req,res)=>{
 })
 
 //Update user
-app.patch("/user", async(req,res)=>{
+app.patch("/user/:userId", async(req,res)=>{
    
-   const userID = req.body.userId;
+   const userID = req.params?.userId;
    
    console.log(userID)
    const data= req.body;
    try{
-      await User.findByIdAndUpdate({_id: userID}, data);
+      const ALLOWED_UPDATES = ["photoUrl","about","age","gender","skills"];
+      const isUpdateAllowed  = Object.keys(data).every((k)=>ALLOWED_UPDATES.includes(k));
+      if(!isUpdateAllowed){
+         throw new Error("Updates not allowed");
+      }
+      if(data?.skills.length>10){
+         throw new Error("Not more than 10 skills allowed")
+      }
+      await User.findByIdAndUpdate({_id: userID}, data,{
+         runValidators:true
+      });
       res.send("User updated Successfully");
    }catch(err){
       res.status(400).send("Something went wrong")
